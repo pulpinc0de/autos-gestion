@@ -1,0 +1,55 @@
+/* Fondo global para pantallas de autenticación */
+body {
+  margin: 0;
+  background: radial-gradient(circle at top left, #00437b, #001446 60%);
+  background-size: cover;
+  background-position: center;
+  overflow-x: hidden;
+  font-family: "Inter", sans-serif;
+}
+
+/* Contenedor centrado */
+.auth-background {
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  color: #d8e9ef;
+}
+
+/* Luces borrosas decorativas */
+.auth-background::before,
+.auth-background::after {
+  content: "";
+  position: absolute;
+  width: 420px;
+  height: 420px;
+  border-radius: 50%;
+  filter: blur(180px);
+  opacity: 0.35;
+  animation: float 10s infinite alternate ease-in-out;
+}
+
+.auth-background::before {
+  background: #008bbf;
+  top: -10%;
+  left: -10%;
+}
+
+.auth-background::after {
+  background: #99ccdc;
+  bottom: -10%;
+  right: -10%;
+}
+
+@keyframes float {
+  0% {
+    transform: translate(0px, 0px);
+  }
+  100% {
+    transform: translate(60px, -40px);
+  }
+}
