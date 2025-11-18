@@ -8,7 +8,7 @@ Este proyecto es una API RESTful para la gestión de autos, usuarios y categorí
 
 - 🔧 **Backend**: [Render](https://api-autos-wrnb.onrender.com)
 - 🧠 **Base de datos**: MongoDB Atlas
-- 🎨 **Frontend**: [GitHub Pages](https://tuusuario.github.io/autos-gestion)
+- 🎨 **Frontend**: [GitHub Pages](https://pulpinc0de.github.io/autos-gestion/)
 
 ---
 
