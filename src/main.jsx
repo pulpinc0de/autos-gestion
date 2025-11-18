@@ -7,7 +7,7 @@ import './styles/authBackground.css';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <BrowserRouter basename="/fron-autos">
+    <BrowserRouter basename="/autos-gestion/">
       <App />
     </BrowserRouter>
   </StrictMode>
