@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Home from "./pages/home";
 import Login from "./pages/login";
 import Register from "./pages/register";
@@ -11,28 +11,26 @@ import PublicRoute from "./components/PublicRoute";
 
 function App() {
   return (
-    <Router>
-      <AuthProvider>
-        <div className="app-content">
-          <Routes>
-            <Route path="/" element={<Home />} />
+    <AuthProvider>
+      <div className="app-content">
+        <Routes>
+          <Route path="/" element={<Home />} />
 
-            {/* Rutas públicas (login/register) deben redirigir a usuarios autenticados */}
-            <Route element={<PublicRoute />}>
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-            </Route>
+          {/* Rutas públicas (login/register) deben redirigir a usuarios autenticados */}
+          <Route element={<PublicRoute />}>
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+          </Route>
 
-            {/* Rutas protegidas: solo accesibles cuando está autenticado */}
-            <Route element={<ProtectedRoute />}>
-              <Route path="/abmAutos" element={<AbmAutos />} />
-            </Route>
-          </Routes>
+          {/* Rutas protegidas: solo accesibles cuando está autenticado */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="/abmAutos" element={<AbmAutos />} />
+          </Route>
+        </Routes>
 
-          <Footer />
-        </div>
-      </AuthProvider>
-    </Router>
+        <Footer />
+      </div>
+    </AuthProvider>
   );
 }
 
