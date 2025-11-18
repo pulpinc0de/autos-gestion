@@ -9,19 +9,19 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
 
-  const { login } = useAuth();
+  const { login, loading } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError(null);
-    try {
-      await login({ email, password });
-      navigate("/abmAutos"); 
-    } catch (err) {
-      setError(err.message || "Error in login");
-    }
-  };
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setError(null);
+  try {
+    const success = await login({ email, password });
+    if (success) navigate("/abmAutos");
+  } catch (err) {
+    setError(err.message);
+  }
+};
 
   return (
     <div className="login-fullscreen" style={{ backgroundImage: `url(${autonegro})` }}>

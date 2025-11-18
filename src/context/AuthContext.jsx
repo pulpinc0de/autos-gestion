@@ -7,24 +7,33 @@ const AuthContext = createContext();
 export function AuthProvider({ children }) {
   const navigate = useNavigate();
 
-  const [user, setUser] = useState(() => {
-    try {
-      const raw = localStorage.getItem("auth_user");
-      return raw ? JSON.parse(raw) : null;
-    } catch {
-      return null;
-    }
-  });
+  const [user, setUser] = useState(null);
+  const [token, setToken] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const [token, setToken] = useState(() => {
-    try {
-      return localStorage.getItem("auth_token") || null;
-    } catch {
-      return null;
-    }
-  });
+  // Validar token al montar
+  useEffect(() => {
+    const storedToken = localStorage.getItem("auth_token");
+    const storedUser = localStorage.getItem("auth_user");
 
-  const [loading, setLoading] = useState(false);
+    if (storedToken) {
+      setToken(storedToken);
+      api.defaults.headers.common["Authorization"] = `Bearer ${storedToken}`;
+
+      api
+        .get("/api/usuarios/perfil")
+        .then((res) => {
+          setUser(res.data.user || JSON.parse(storedUser));
+        })
+        .catch(() => {
+          logout(false);
+        })
+        .finally(() => setLoading(false));
+    } else {
+      logout(false);
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
     if (user) {
@@ -44,62 +53,58 @@ export function AuthProvider({ children }) {
     }
   }, [token]);
 
-  // LOGIN
   const login = async ({ email, password }) => {
     setLoading(true);
     try {
-      console.log("AuthContext.login -> payload", { email, passwordProvided: !!password });
       const res = await api.post("/api/usuarios/login", { email, password });
       const { user: userResp, token: tokenResp } = res.data;
 
       setUser(userResp);
       setToken(tokenResp);
       setLoading(false);
-      return userResp;
+      return true;
     } catch (err) {
       setLoading(false);
-      const message = err?.response?.data?.message || err.message || "Error al iniciar sesión";
-      console.error("AuthContext.login error:", err?.response?.data || err);
-      throw new Error(message);
+      throw new Error(err?.response?.data?.message || "Error al iniciar sesión");
     }
   };
 
-  // REGISTER
   const register = async ({ name, email, password }) => {
     setLoading(true);
     try {
-      console.log("AuthContext.register -> payload", { name, email, passwordProvided: !!password });
-      const res = await api.post("/api/usuarios/register", { name, email, password });
-      const { user: userResp } = res.data;
+      await api.post("/api/usuarios/register", { name, email, password });
       setLoading(false);
-      return userResp;
+      return true;
     } catch (err) {
       setLoading(false);
-      const message = err?.response?.data?.message || err.message || "Error al registrar";
-      console.error("AuthContext.register error:", err?.response?.data || err);
-      throw new Error(message);
+      throw new Error(err?.response?.data?.message || "Error al registrar");
     }
   };
 
-  const logout = () => {
+  const logout = (redirect = true) => {
     setUser(null);
     setToken(null);
-    navigate("/login");
+    localStorage.clear();
+    if (redirect) navigate("/home");
   };
 
-  const value = {
-    user,
-    token,
-    isAuthenticated: !!user,
-    loading,
-    login,
-    register,
-    logout,
-    setUser,
-    setToken,
-  };
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider
+      value={{
+        user,
+        token,
+        isAuthenticated: !!user,
+        loading,
+        login,
+        register,
+        logout,
+        setUser,
+        setToken,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
 export function useAuth() {
